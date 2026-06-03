@@ -1,0 +1,51 @@
+services:
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: opslab-nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+    networks:
+      - opslab-network
+
+  backend:
+    build:
+      context: ./backend
+    container_name: opslab-backend
+    environment:
+      PORT: 3000
+      DATABASE_URL: postgres://opslab:opslab_password@postgres:5432/opslab_db
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - opslab-network
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: opslab-postgres
+    environment:
+      POSTGRES_USER: opslab
+      POSTGRES_PASSWORD: opslab_password
+      POSTGRES_DB: opslab_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - opslab-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: opslab-redis
+    networks:
+      - opslab-network
+
+volumes:
+  postgres_data:
+
+networks:
+  opslab-network:
+    driver: bridge
