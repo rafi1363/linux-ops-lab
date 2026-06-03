@@ -1,7 +1,5 @@
 # Linux Operation Lab
 
-Folder ini berisi semua praktik pembelajaran Linux, networking, NGINX, Docker, security, dan sertifikasi.
-
 A self-directed Linux infrastructure lab focused on IT Operations fundamentals, including networking, NGINX reverse proxy, firewall concepts, service exposure, and troubleshooting.
 
 ## Struktur Folder
