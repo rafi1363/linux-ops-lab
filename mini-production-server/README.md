@@ -157,7 +157,7 @@ The backend service is intentionally stopped to simulate an operational incident
 
 ### 5. HTTP 502 Bad Gateway
 
-![502 Bad Gateway](assets/screenshots/06-nginx-502-bad-gateway.png)
+![502 Bad Gateway](assets/screenshots/05-nginx-502-bad-gateway.png)
 
 With the backend unavailable, NGINX returns HTTP 502 Bad Gateway.
 
@@ -167,7 +167,7 @@ This behavior is expected and demonstrates dependency failure handling.
 
 ### 6. NGINX Error Log Investigation
 
-![NGINX Error Logs](assets/screenshots/05-localhost-test.png)
+![NGINX Error Logs](assets/screenshots/06-nginx-error-log-investigation.png)
 
 The issue is investigated using service logs and HTTP response validation.
 
@@ -248,4 +248,5 @@ Planned enhancements:
 * Cloud deployment practice
 
 ```
+
 ```
