@@ -43,9 +43,48 @@ services:
     networks:
       - opslab-network
 
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: opslab-cadvisor
+    ports:
+      - "8081:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    networks:
+      - opslab-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: opslab-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - cadvisor
+    networks:
+      - opslab-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: opslab-grafana
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - opslab-network
+    volumes:
+      - grafana_data:/var/lib/grafana
+
 volumes:
   postgres_data:
-
+  grafana_data:
+  
 networks:
   opslab-network:
     driver: bridge
