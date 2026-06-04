@@ -223,6 +223,81 @@ During continuous requests to the backend API, CPU, memory, and network metrics 
 
 ---
 
+## Incident Detection & Alerting
+
+The monitoring stack includes Grafana Alerting to detect backend service failures automatically.
+
+Alert Rule:
+
+```promql
+time() - container_last_seen{name="opslab-backend"}
+```
+
+## Threshold:
+
+```
+> 10 seconds
+```
+
+## Evaluation:
+
+```
+Every 10 seconds
+```
+
+This rule simulates a real-world operational incident workflow where a service becomes unavailable and requires operator attention.
+
+## Alert Lifecycle
+
+### 1. Normal State
+
+![Alert Normal](assets/screenshots/09-grafana-alert-rule-normal.png)
+
+The backend container is healthy and visible to cAdvisor.Alert status remains **Normal**.---
+
+### 2. Pending State
+
+![Alert Pending](assets/screenshots/10-grafana-alert-rule-pending.png)
+
+The backend container is intentionally stopped.Grafana detects the issue and starts the pending evaluation period before escalating the alert.---
+
+### 3. Firing State
+
+![Alert Firing](assets/screenshots/11-grafana-alert-rule-firing.png)
+
+The backend container remains unavailable beyond the configured threshold.Grafana changes the alert state to **Firing**, indicating that operator action is required.---
+
+### 4. Recovery State
+
+![Alert Recovered](assets/screenshots/12-grafana-alert-rule-recovered.png)
+
+The backend service is restored.Grafana automatically returns the alert state to **Normal** after metrics become available again.---
+
+### Incident Workflow
+
+```text  
+Backend Running
+       ↓
+Backend Stopped
+       ↓
+Pending
+       ↓
+Firing
+       ↓
+Backend Restarted
+       ↓
+Recovered
+```
+
+
+
+This demonstrates a complete monitoring and incident-response lifecycle using:
+
+- cAdvisor
+- Prometheus
+- Grafana
+- Grafana Alerting
+
 ## What I Learned
 
 * Reverse proxy architecture using NGINX
@@ -233,6 +308,10 @@ During continuous requests to the backend API, CPU, memory, and network metrics 
 * Operational troubleshooting using logs and metrics
 * Incident simulation and service recovery workflows
 * Observability fundamentals for Platform Engineering and IT Operations
+* Grafana Alert Rule creation  
+* Alert lifecycle management (Normal → Pending → Firing → Recovered)  
+* Incident detection using Prometheus metrics  
+* Monitoring-driven troubleshooting workflows
 
 ---
 
@@ -240,12 +319,13 @@ During continuous requests to the backend API, CPU, memory, and network metrics 
 
 Planned enhancements:
 
-* Grafana alerting
-* GitHub Actions CI/CD
-* Container health monitoring alerts
-* Centralized logging
-* Infrastructure as Code experiments
-* Cloud deployment practice
+* Email / Discord / Slack alert notifications  
+* GitHub Actions CI/CD  
+* Container health monitoring automation  
+* Centralized logging (Loki / ELK)  
+* Infrastructure as Code (Terraform)  
+* Cloud deployment practice (AWS / Azure)  
+* Kubernetes migration experiment
 
 ```
 
