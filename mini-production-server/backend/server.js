@@ -1,6 +1,7 @@
 const express = require("express");
 const { Pool } = require("pg");
 const redis = require("redis");
+const nodemailer = require("nodemailer");
 
 const app = express();
 
@@ -17,6 +18,17 @@ const redisClient = redis.createClient({
 redisClient.on("error", (err) => {
   console.error("Redis error:", err.message);
 });
+
+const sendEmail = async (to, subject, text) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: 'ryuta130603@gmail.com',
+      pass: 'M4ncR4f1Z00h4ir'
+    }
+  });
+  await transporter.sendMail({to, subject, text});
+}
 
 async function connectRedis() {
   if (!redisClient.isOpen) {
@@ -75,6 +87,21 @@ app.get("/api/redis-test", async (req, res) => {
     });
   }
 });
+
+app.post("/api/send-email", async (req, res) => {
+  try {
+    const {to, subject, text} = req.body;
+    await sendEmail(to, subject, text);
+    res.status(200).json({
+      message: "email sent"
+    })
+  }catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: error.message,
+    })
+  }
+})
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Backend service running on port ${PORT}`);
